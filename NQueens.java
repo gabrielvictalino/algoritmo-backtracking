@@ -1,62 +1,83 @@
-public class NQueens {
+package AtividadeBd.WordDataCup.Repository;
 
-    public static boolean isSafe(char board[][], int linhas, int col) {
+import java.util.Scanner;
 
-        for (int i = linhas - 1; i >= 0; i--) {
-            if (board[i][col] == 'Q') {
+public class NRainhas {
+
+    public static boolean posicaoSegura(int linha, int coluna, int[] pos) {
+        for (int i = 0; i < linha; i++) {
+
+            // mesma coluna
+            if (pos[i] == coluna) {
                 return false;
             }
-        }
 
-        for (int i = linhas - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
-            if (board[i][j] == 'Q') {
-                return false;
-            }
-        }
-
-        for (int i = linhas - 1, j = col + 1; i >= 0 && j < board.length; i--, j++) {
-            if (board[i][j] == 'Q') {
+            // mesma diagonal
+            if (Math.abs(pos[i] - coluna) == Math.abs(i - linha)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static void nQueens(char board[][], int linhas) {
-        // base
-        if (linhas == board.length) {
-            printBoard(board);
+    public static void resolverNRainhas(
+            int linha,
+            int[] pos,
+            int n,
+            int[] totalSolucoes,
+            int[] totalChamadasRNR) {
+
+        totalChamadasRNR[0]++;
+
+        if (linha == n) {
+            totalSolucoes[0]++;
             return;
         }
 
-        for (int j = 0; j < board.length; j++) {
-            if (isSafe(board, linhas, j)) {
-                board[linhas][j] = 'Q';
-                nQueens(board, linhas + 1); 
-                board[linhas][j] = 'x';
+        for (int coluna = 0; coluna < n; coluna++) {
+            if (posicaoSegura(linha, coluna, pos)) {
+                pos[linha] = coluna;
+                resolverNRainhas(
+                        linha + 1,
+                        pos,
+                        n,
+                        totalSolucoes,
+                        totalChamadasRNR);
             }
-        }
-    }
-
-    public static void printBoard(char board[][]) {
-        System.out.println("----- chess board ------");
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.println();
         }
     }
 
     public static void main(String[] args) {
-        int n = 4;
-        char board[][] = new char[n][n];
-        // initialize
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                board[i][j] = 'x';
-            }
-        }
-        nQueens(board, 0);
+
+        Scanner scanner = new Scanner(System.in);
+
+        int n = scanner.nextInt();
+
+        int[] pos = new int[n];
+
+        int[] totalSolucoes = {0};
+        int[] totalChamadasRNR = {0};
+
+        long inicio = System.nanoTime();
+
+        resolverNRainhas(
+                0,
+                pos,
+                n,
+                totalSolucoes,
+                totalChamadasRNR);
+
+        long fim = System.nanoTime();
+
+        double tempo = (fim - inicio) / 1_000_000_000.0;
+
+        System.out.printf(
+                "n = %d, solucoes = %d, tempo = %.6f segundos, chamadasRNR = %d%n",
+                n,
+                totalSolucoes[0],
+                tempo,
+                totalChamadasRNR[0]);
+
+        scanner.close();
     }
 }
