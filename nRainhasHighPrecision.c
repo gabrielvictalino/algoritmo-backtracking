@@ -3,12 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-    struct timespec inicio,
-    fim;
-int n;
-int *pos; // pos[linha] = coluna
 
-int posicao_segura(int linha, int coluna)
+int posicao_segura(int linha, int coluna, int * pos)
 {
     for (int i = 0; i < linha; i++)
     {
@@ -26,46 +22,42 @@ int posicao_segura(int linha, int coluna)
     return 1;
 }
 
-long long total_solucoes = 0;
 
-void resolver_n_rainhas(int linha)
+
+void resolver_n_rainhas(int linha, int * pos, int * total_solucoes, int n)
 {
     if (linha == n)
     {
-        total_solucoes++;
+        (*total_solucoes)= (*total_solucoes) +1;
         return;
     }
 
     for (int coluna = 0; coluna < n; coluna++)
     {
-        if (posicao_segura(linha, coluna))
+        if (posicao_segura(linha, coluna,pos))
         {
             pos[linha] = coluna;
-            resolver_n_rainhas(linha + 1);
+            resolver_n_rainhas(linha + 1,pos,total_solucoes,n);
         }
     }
 }
 
-int main(int argc, char *argv[])
+int main()
 {
-    if (argc < 2)
-    {
-        printf("Uso: %s n\n", argv[0]);
-        return 1;
-    }
+    long long total_solucoes = 0;
+    struct timespec inicio, fim;
+    int n;
+    int *pos;
+    
+    scanf("%d",&n);
 
-    n = atoi(argv[1]);
     pos = (int *)malloc(n * sizeof(int));
-    if (pos == NULL)
-    {
-        printf("Erro ao alocar memória\n");
-        return 1;
-    }
+
 
     clock_gettime(CLOCK_MONOTONIC, &inicio);
 
     total_solucoes = 0;
-    resolver_n_rainhas(0);
+    resolver_n_rainhas(0,pos,&total_solucoes,n);
 
     clock_gettime(CLOCK_MONOTONIC, &fim);
 
