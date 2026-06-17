@@ -1,5 +1,3 @@
-package AtividadeBd.WordDataCup.Repository;
-
 import java.util.Scanner;
 
 public class NRainhas {
